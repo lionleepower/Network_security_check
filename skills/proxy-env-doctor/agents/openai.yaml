@@ -1,0 +1,4 @@
+interface:
+  display_name: "代理网络环境诊断与配置"
+  short_description: "检查代理、DNS与IPv6环境，配置AI分流和自动回退并验证恢复"
+  default_prompt: "请使用 $proxy-env-doctor 检查我当前的代理网络环境，确认需要的配置与变更范围，完成可恢复的优化并验证结果。"
