@@ -7,3 +7,8 @@ venv/
 .env.*
 .DS_Store
 Thumbs.db
+
+# Local diagnosis and operation artifacts; keep reusable tools in the skill.
+/reports/
+/.proxy-env-local/
+/.release/

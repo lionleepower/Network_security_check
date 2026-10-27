@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "status": "draft",
+  "mode": "global",
+  "traffic_scope": "all-public-traffic",
+  "allowed_client_roots": [],
+  "authorization": {
+    "local_read": false,
+    "browser_test": false,
+    "client_modify": false,
+    "reload": false,
+    "restart": false,
+    "fault_test": false
+  },
+  "claude": {
+    "group": "Claude-Dedicated",
+    "listener": null,
+    "allow_failover": false,
+    "failure_action": "reject",
+    "session_policy": "do-not-touch-existing",
+    "web_test_context": "private-or-isolated"
+  },
+  "test_targets": ["api.anthropic.com"],
+  "dns_bootstrap_exceptions": [],
+  "notes": "Draft template only. Record the human user's actual scope and consent before making this ready."
+}

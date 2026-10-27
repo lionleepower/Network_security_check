@@ -33,6 +33,8 @@ Claude 注意登录、API、更新与 claudeusercontent.com；ChatGPT 注意认�
 
 全局模式跳过逐服务规则。切规则模式前确认流量范围，保留原规则与 MATCH 策略，验证实际命中；不同客户端的 MATCH／FINAL 语法不混抄。
 
+Claude 要求独立指定链路时，按 [claude-dedicated-route.md](claude-dedicated-route.md) 单独设计故障策略和入站。用户要求全局模式或全流量保护时，不自行切回国内直连分流，也不将共用 GLOBAL 描述为 Claude 专用路径。
+
 ## 两种回退
 
 | 类型 | 条件 | 限制 |

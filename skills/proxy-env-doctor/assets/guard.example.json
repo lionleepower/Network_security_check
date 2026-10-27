@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "status": "draft",
+  "authorization": {"local_read": false, "client_modify": false, "reload": false, "public_probe": false, "browser_pause": false},
+  "region": null,
+  "broadband_ips": [],
+  "baseline_source": null,
+  "browser": {"profile": null, "scope_id": null, "extension_instance": null, "proxy": null},
+  "controller": {"controller": null, "socket": null, "token_file": null},
+  "routing": {"mode": "global", "group": null, "fallback": null, "probe_group": null, "inbound": null, "probe_inbound": null, "port": null, "probe_port": null, "nodes": []},
+  "node_runtime": null,
+  "interval_seconds": 300,
+  "detector_url": "https://ippure.com/Browser-WebRTC-Leak-Detect"
+}

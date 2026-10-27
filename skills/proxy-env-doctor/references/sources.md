@@ -2,6 +2,8 @@
 
 以下链接于 2026-10-20 核对可访问。实施时按已发现的客户端、内核和 OS 版本复查相关节，不假设最新示例适用于旧版。
 
+Claude Code 网络配置与 Mihomo 入站文档于 2026-10-25 再次核对，用于 [Claude 独立链路流程](claude-dedicated-route.md)。用户提供文章的采用范围与未采纳的默认操作在该流程末节说明，文章不作为厂商风控机制的证据。
+
 | 资料 | 用途 |
 | --- | --- |
 | [Mihomo TUN](https://wiki.metacubex.one/config/inbound/tun/) | dns-hijack、strict-route、接口、系统限制 |

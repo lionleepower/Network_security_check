@@ -2,6 +2,7 @@
 """Read-only, allowlisted summary of a Clash/Mihomo YAML file; never print secrets."""
 import argparse
 import json
+import ipaddress
 from pathlib import Path
 import sys
 from urllib.parse import urlsplit
@@ -54,7 +55,7 @@ def inspect_config(data):
             parts = fragment.split('&') if fragment else []
             first = parts[0] if parts else ''
             has_route = bool(first) and '=' not in first and first not in {'h3', 'skip-cert-verify'}
-            route = ref(first) if has_route else 'UNSPECIFIED'
+            route = ('RULES' if first == 'RULES' else ref(first)) if has_route else 'UNSPECIFIED'
             if route == 'UNRESOLVED':
                 route = 'UNRESOLVED_ROUTE_OR_INTERFACE'
             result.append({'transport': transport, 'route_reference': route,
@@ -108,10 +109,33 @@ def inspect_config(data):
         hijack = []
     mode = data.get('mode')
     stack = tun.get('stack')
+    listeners = data.get('listeners') or []
+    if not isinstance(listeners, list):
+        raise ValueError('Malformed listeners')
+    listener_rows = []
+    for index, listener in enumerate(listeners, 1):
+        if not isinstance(listener, dict):
+            raise ValueError('Malformed listener')
+        address = listener.get('listen')
+        try:
+            loopback = ipaddress.ip_address(address).is_loopback if isinstance(address, str) else None
+        except ValueError:
+            loopback = None
+        port = listener.get('port')
+        kind = listener.get('type')
+        listener_rows.append({
+            'id': f'listener-{index}',
+            'type': kind if kind in {'http', 'socks', 'mixed', 'tun', 'redirect', 'tproxy'} else 'other',
+            'loopback': loopback,
+            'port': port if type(port) is int and 1 <= port <= 65535 else None,
+            'proxy_reference': ref(listener['proxy']) if listener.get('proxy') else 'RULES',
+            'custom_rule_configured': bool(listener.get('rule')),
+        })
     return {
         'scope': 'static_file_only', 'mode': mode if mode in {'rule', 'global', 'direct'} else 'unspecified-or-other',
         'ipv6': flag(data, 'ipv6'), 'proxy_count': len(proxies), 'duplicate_name_count': duplicates,
         'groups': group_rows, 'cycle_detected': bool(cyclic), 'cycle_entry_ids': sorted(cyclic),
+        'listeners': listener_rows,
         'rules_count': count(data.get('rules')), 'rule_provider_count': count(data.get('rule-providers')),
         'tun': {**{k: flag(tun, k) for k in ['enable', 'auto-route', 'auto-detect-interface', 'strict-route']},
                 'stack': stack if stack in {'system', 'gvisor', 'mixed', 'mips'} else 'unspecified-or-other',

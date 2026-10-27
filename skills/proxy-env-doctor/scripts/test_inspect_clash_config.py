@@ -14,6 +14,23 @@ spec.loader.exec_module(summary)
 
 
 class SummaryTests(unittest.TestCase):
+    def test_rules_marker_is_a_valid_dns_route(self):
+        result = summary.inspect_config({'dns': {'nameserver': ['https://resolver.invalid/dns-query#RULES&h3=false']}})
+        self.assertEqual(result['dns']['upstreams']['nameserver'][0]['route_reference'], 'RULES')
+
+    def test_listener_summary_exposes_routing_but_not_credentials(self):
+        data = {'proxy-groups': [{'name': 'private-group', 'type': 'select', 'proxies': ['DIRECT']}],
+                'listeners': [{'name': 'private-listener', 'type': 'http', 'listen': '127.0.0.1', 'port': 18080,
+                               'proxy': 'private-group', 'users': [{'username': 'PRIVATE', 'password': 'SECRET'}]},
+                              {'name': 'other', 'type': 'http', 'listen': '0.0.0.0', 'port': 18081, 'proxy': 'DIRECT'}]}
+        result = summary.inspect_config(data)
+        self.assertTrue(result['listeners'][0]['loopback'])
+        self.assertEqual(result['listeners'][0]['proxy_reference'], 'group-1')
+        self.assertFalse(result['listeners'][1]['loopback'])
+        self.assertEqual(result['listeners'][1]['proxy_reference'], 'DIRECT')
+        for secret in ['private-group', 'private-listener', 'PRIVATE', 'SECRET']:
+            self.assertNotIn(secret, json.dumps(result))
+
     def test_dns_options_and_interfaces_are_not_reported_as_broken_groups(self):
         config = {'dns': {'nameserver': ['https://resolver.invalid/dns-query#h3=true', 'https://resolver.invalid/dns-query#private-interface&h3=true']}}
         entries = summary.inspect_config(config)['dns']['upstreams']['nameserver']
